@@ -2,9 +2,20 @@
 
 ## Локальный запуск
 
+### Требования
+
+1. docker
+2. docker-compose
+
 ### Подготовка окружения
 
-Копируем файл `.env.example` в `.env`. При необходимости меняем значения переменных
+```
+# copy .env file
+cp .env.example .env
+
+# copy config file
+cp config/example.config.yaml config/local.config.yaml
+```
 
 ### Запуск
 ```

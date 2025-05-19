@@ -6,6 +6,14 @@ MIGRATE:=docker run --rm -v $(shell pwd)/database/migrations:/migrations --netwo
 
 GOIMPORTS:=docker run --rm -v $(shell pwd):/src -w /src cytopia/goimports
 
+# Runs docker-compose if exists else docker compose
+ifeq ($(shell [[ `which docker-compose` != "" ]] && echo true ),true)
+	DOCKER_COMPOSE=docker-compose
+else
+	DOCKER_COMPOSE=docker compose
+endif
+
+
 .PHONY: imports
 imports:
 	$(GOIMPORTS) -local "highload-architect/" -w .
@@ -16,7 +24,7 @@ swag:
 
 .PHONY: run
 run:
-	docker-compose -f docker-compose.yaml up --detach --build --remove-orphans
+	$(DOCKER_COMPOSE) -f docker-compose.yaml up --detach --build --remove-orphans
 
 .PHONY: migrate
 migrate: migrate-up ## alias for migrate-up
