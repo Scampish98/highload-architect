@@ -15,14 +15,12 @@ import (
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-
-	cfg, err := config.New(logger)
+	cfg, err := config.New()
 	if err != nil {
 		panic(err)
 	}
 
-	//logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 
 	shutdown.SetLogger(shutdownlogger.New(logger))
 	shutdown.SetTimeout(cfg.Shutdown.Timeout)

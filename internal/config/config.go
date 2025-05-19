@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 
 	"github.com/mcuadros/go-defaults"
@@ -17,7 +16,7 @@ type Config struct {
 	Auth Auth `mapstructure:"auth"`
 }
 
-func New(logger *slog.Logger) (*Config, error) {
+func New() (*Config, error) {
 	path := os.Getenv("CONFIG")
 
 	viper.SetConfigFile(path)
@@ -35,8 +34,6 @@ func New(logger *slog.Logger) (*Config, error) {
 		return nil, fmt.Errorf("failed to read the configuration file: %w", err)
 	}
 
-	logger.Debug("before", slog.String("cfg", fmt.Sprintf("%+v", cfg.Auth.TTL)))
-	defaults.SetDefaults(cfg) // TODO dont work
-	logger.Debug("after", slog.String("cfg", fmt.Sprintf("%+v", cfg.Auth.TTL)))
+	defaults.SetDefaults(cfg)
 	return cfg, nil
 }

@@ -42,7 +42,7 @@ func (h *UserHandler) GetByID(c *gin.Context) error {
 		BirthDate: (*models.Date)(usr.Birthdate),
 		Sex:       models.SexFromEntity(usr.Sex),
 		Biography: string(usr.Biography),
-		City:      string(usr.City), // TODO to transformer
+		City:      string(usr.City),
 	})
 	return nil
 }
