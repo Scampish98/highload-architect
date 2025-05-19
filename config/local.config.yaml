@@ -1,0 +1,17 @@
+http_server:
+  host: 0.0.0.0
+  port: 8080
+
+shutdown:
+  timeout: 10s
+
+auth:
+  secret: "blablabla"
+
+db:
+  host: db
+  port: 5432
+  name: postgres
+  user: postgres
+  password: postgres
+  sslmode: disable

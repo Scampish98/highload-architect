@@ -1,0 +1,59 @@
+services:
+  app:
+    restart: always
+    build:
+      dockerfile: build/Dockerfile
+      context: .
+      target: dev
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+      db-migration:
+        condition: service_completed_successfully
+    healthcheck:
+      test: "curl -f http://localhost:8080/api/health-check"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db-migration:
+    restart: no
+    image: migrate/migrate
+    volumes:
+      - ./database/migrations:/migrations
+    env_file:
+      - .env
+    command:
+      - "-path"
+      - "/migrations/"
+      - "-database"
+      - "postgres://${DB_USER}:${DB_PASS}@db:5432/${DB_NAME}?sslmode=disable"
+      - "up"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16.8
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: "$DB_HOST"
+      POSTGRES_DB: "$DB_NAME"
+      POSTGRES_USER: "$DB_USER"
+      POSTGRES_PASSWORD: "$DB_PASS"
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "$DB_HOST:$DB_PORT:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

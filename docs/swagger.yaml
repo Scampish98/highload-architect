@@ -1,0 +1,231 @@
+basePath: /api
+definitions:
+  models.Error:
+    properties:
+      code:
+        example: 1
+        type: integer
+      message:
+        example: internal server error
+        type: string
+    required:
+    - code
+    - message
+    type: object
+  models.Sex:
+    enum:
+    - any
+    - male
+    - female
+    type: string
+    x-enum-varnames:
+    - SexAny
+    - SexMale
+    - SexFemale
+  models.User:
+    properties:
+      biography:
+        example: London is the capital of Great Britain
+        type: string
+      birthdate:
+        example: "1990-01-01"
+        format: date
+        type: string
+      city:
+        example: Saint-Petersburg
+        maxLength: 50
+        minLength: 1
+        type: string
+      first_name:
+        example: Ivan
+        type: string
+      id:
+        example: 1
+        type: integer
+      last_name:
+        example: Ivanov
+        type: string
+      sex:
+        allOf:
+        - $ref: '#/definitions/models.Sex'
+        example: male
+      username:
+        example: my_username
+        type: string
+    required:
+    - first_name
+    - id
+    - last_name
+    - sex
+    - username
+    type: object
+  requests.SignInRequest:
+    properties:
+      password:
+        example: "1234567"
+        maxLength: 50
+        minLength: 1
+        type: string
+      username:
+        example: myusername
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  requests.SignUpRequest:
+    properties:
+      biography:
+        example: London is the capital of Great Britain
+        type: string
+      birthdate:
+        example: "2006-01-02"
+        format: date
+        type: string
+      city:
+        example: Saint-Petersburg
+        maxLength: 50
+        minLength: 1
+        type: string
+      first_name:
+        example: Ivan
+        maxLength: 50
+        minLength: 1
+        type: string
+      last_name:
+        example: Ivanov
+        maxLength: 50
+        minLength: 1
+        type: string
+      password:
+        example: "123456"
+        maxLength: 50
+        minLength: 1
+        type: string
+      sex:
+        allOf:
+        - $ref: '#/definitions/models.Sex'
+        example: male
+      username:
+        example: myusername
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - first_name
+    - last_name
+    - password
+    - username
+    type: object
+  responses.SignInResponse:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+info:
+  contact: {}
+  description: Swagger API for Highload-Architect Homework API Gateway backend http-server
+  title: Highload-Architect Homework Backend API
+  version: "1.0"
+paths:
+  /user/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Получение информации о пользователе по его идентификатору
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user info by ID
+      tags:
+      - user
+  /user/signin:
+    post:
+      consumes:
+      - application/json
+      description: Вход для существующего пользователя
+      parameters:
+      - description: user info
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.SignInResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: User sign in
+      tags:
+      - user
+  /user/signup:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя
+      parameters:
+      - description: user info
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: User sign up
+      tags:
+      - user
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Api-Key
+    type: apiKey
+swagger: "2.0"
