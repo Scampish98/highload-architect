@@ -76,6 +76,10 @@ func (e AppError) InternalCode() int {
 }
 
 func (e AppError) Message() string {
+	if e.details == "" {
+		return e.msg
+	}
+
 	return fmt.Sprintf("%s (%s)", e.msg, e.details)
 }
 
