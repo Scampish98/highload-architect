@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"strings"
 	"time"
 
 	"highload-architect/internal/apperror"
@@ -28,10 +27,53 @@ func NewDBRepo(conn *sqlx.DB, logger *slog.Logger) *UserDBRepo {
 	}
 }
 
+func (r UserDBRepo) Search(ctx context.Context, filter entities.UserFilter) ([]*entities.User, error) {
+	query := fmt.Sprintf(`SELECT %s FROM users WHERE 1 = 1`, fieldsStr)
+	params := make(map[string]any)
+
+	if filter.FirstNameLike != "" {
+		query += ` AND first_name LIKE :first_name_part `
+		params["first_name_part"] = fmt.Sprintf("%s%%", filter.FirstNameLike)
+	}
+
+	if filter.LastNameLike != "" {
+		query += ` AND last_name LIKE :last_name_part `
+		params["last_name_part"] = fmt.Sprintf("%s%%", filter.LastNameLike)
+	}
+
+	query += ` ORDER BY id`
+
+	stmt, err := r.conn.PrepareNamedContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("create query: %w", err)
+	}
+	defer func(ctx context.Context, stmt *sqlx.NamedStmt) {
+		if err := stmt.Close(); err != nil {
+			r.logger.ErrorContext(ctx, "failed to close insert statement")
+		}
+	}(ctx, stmt)
+
+	r.logger.DebugContext(ctx, "try exec query",
+		slog.String("query", query),
+		slog.String("stmt.QueryString", stmt.QueryString),
+		slog.String("stmt.Params", fmt.Sprintf("%+v", stmt.Params)),
+		slog.String("params", fmt.Sprintf("%+v", params)),
+	)
+
+	var users []dbUser
+
+	err = stmt.SelectContext(ctx, &users, params)
+	if err != nil {
+		return nil, fmt.Errorf("exec query: %w", err)
+	}
+
+	return convertManyToEntity(users), nil
+}
+
 func (r UserDBRepo) GetByID(ctx context.Context, userID entities.UserID) (*entities.User, error) {
 	var row dbUser
 
-	query := fmt.Sprintf(`SELECT %s FROM users WHERE id = $1`, strings.Join(fields, ","))
+	query := fmt.Sprintf(`SELECT %s FROM users WHERE id = $1`, fieldsStr)
 
 	err := r.conn.GetContext(ctx, &row, query, userID)
 	if err != nil {
@@ -48,7 +90,7 @@ func (r UserDBRepo) GetByID(ctx context.Context, userID entities.UserID) (*entit
 func (r UserDBRepo) GetByUsername(ctx context.Context, username entities.Username) (*entities.User, error) {
 	var row dbUser
 
-	query := fmt.Sprintf(`SELECT %s FROM users WHERE username = $1`, strings.Join(fields, ","))
+	query := fmt.Sprintf(`SELECT %s FROM users WHERE username = $1`, fieldsStr)
 
 	r.logger.DebugContext(ctx, "try get user by username",
 		slog.String("query", query),

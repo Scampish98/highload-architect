@@ -16,6 +16,9 @@ func NewDB(cfg *config.Database) (*sqlx.DB, error) {
 		return nil, fmt.Errorf("open connection: %w", err)
 	}
 
+	db.SetMaxIdleConns(cfg.MaxIdleConns)
+	db.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
+
 	err = db.Ping()
 	if err != nil {
 		return nil, fmt.Errorf("ping: %w", err)

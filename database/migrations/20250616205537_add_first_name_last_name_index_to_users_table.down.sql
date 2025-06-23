@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS users_first_name_last_name_idx;

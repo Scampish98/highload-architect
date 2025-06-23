@@ -1,5 +1,7 @@
 package models
 
+type Users []User
+
 type User struct {
 	ID        uint64 `json:"id" binding:"required" example:"1"`
 	Username  string `json:"username" binding:"required" example:"my_username"`

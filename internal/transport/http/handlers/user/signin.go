@@ -19,6 +19,7 @@ import (
 //	@Produce		json
 //	@Param			request	body		requests.SignInRequest	true	"user info"
 //	@Success		200		{object}	responses.SignInResponse
+//	@Failure		400		{object}	models.Error
 //	@Failure		401		{object}	models.Error
 //	@Failure		500		{object}	models.Error
 //	@Router			/user/signin [post]

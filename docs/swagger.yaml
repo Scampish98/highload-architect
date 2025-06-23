@@ -150,6 +150,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
         "401":
           description: Unauthorized
           schema:
@@ -161,6 +165,46 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get user info by ID
+      tags:
+      - user
+  /user/search/:
+    get:
+      consumes:
+      - application/json
+      description: Получения списка пользователей, удовлетворяющих фильтрам
+      parameters:
+      - example: van
+        in: query
+        name: first_name
+        type: string
+      - example: vano
+        in: query
+        name: last_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Search users by filter
       tags:
       - user
   /user/signin:
@@ -182,6 +226,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/responses.SignInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
         "401":
           description: Unauthorized
           schema:
@@ -212,6 +260,10 @@ paths:
           description: OK
           schema:
             type: boolean
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
         "401":
           description: Unauthorized
           schema:

@@ -29,3 +29,8 @@ const (
 	SexMale   Sex = 1
 	SexFemale Sex = 2
 )
+
+type UserFilter struct {
+	FirstNameLike string
+	LastNameLike  string
+}

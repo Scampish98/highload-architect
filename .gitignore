@@ -5,3 +5,5 @@
 data/
 vendor/
 config/local.config.yaml
+
+cmd/test

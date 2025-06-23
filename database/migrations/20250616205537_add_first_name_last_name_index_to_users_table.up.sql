@@ -1,0 +1,1 @@
+CREATE INDEX users_first_name_last_name_idx ON users (first_name varchar_pattern_ops, last_name varchar_pattern_ops);

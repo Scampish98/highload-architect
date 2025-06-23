@@ -47,3 +47,12 @@ func (u *UserService) GetByID(ctx context.Context, userID entities.UserID) (*ent
 
 	return usr, nil
 }
+
+func (u *UserService) Search(ctx context.Context, filter entities.UserFilter) ([]*entities.User, error) {
+	usrs, err := u.repo.Search(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("search users: %w", err)
+	}
+
+	return usrs, nil
+}

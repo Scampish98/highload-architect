@@ -22,6 +22,7 @@ import (
 //	@Produce		json
 //	@Param			request	body		requests.SignUpRequest	true	"user info"
 //	@Success		200		{boolean}	bool
+//	@Failure		400		{object}	models.Error
 //	@Failure		401		{object}	models.Error
 //	@Failure		500		{object}	models.Error
 //	@Router			/user/signup [post]

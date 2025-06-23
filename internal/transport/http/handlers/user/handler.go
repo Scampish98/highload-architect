@@ -37,4 +37,5 @@ func RegAuthHTTPHandlers(r *gin.RouterGroup, userService *user.UserService, auth
 	handler := newUserHandler(userService, authService, logger)
 
 	r.GET("/get/:id", httputil.Wrap(handler.GetByID))
+	r.GET("/search", httputil.Wrap(handler.Search))
 }
