@@ -26,6 +26,10 @@ swag:
 run:
 	$(DOCKER_COMPOSE) -f docker-compose.yaml up --detach --build --remove-orphans
 
+.PHONY: run-monitoring
+run-monitoring:
+	$(DOCKER_COMPOSE) -f docker-compose.monitoring.yaml up --detach --build --remove-orphans
+
 .PHONY: migrate
 migrate: migrate-up ## alias for migrate-up
 
